@@ -7,8 +7,9 @@ import { downloadDynamicOf, useCookieFile } from './index'
 import { fse, logSymbols } from './libs'
 
 const { require } = esmUtils(import.meta)
+const { name, version } = require('../package.json')
 
-const cli = cac()
+const cli = cac(name)
 
 cli
   .command('[mid]', `UP's mid`)
@@ -36,6 +37,6 @@ cli.help()
 
 // Display version number when `-v` or `--version` appears
 // It's also used in help message
-cli.version(require('../package.json').version)
+cli.version(version)
 
 cli.parse()
