@@ -124,7 +124,11 @@ export async function downloadDynamicOf(mid: string) {
     const opus = item.modules.module_dynamic.major?.opus
     if (!opus) continue
 
-    const text = opus.summary.text
+    let text = opus.summary.text
+    if (text.length > 200) {
+      text = text.slice(0, 200) + '...'
+    }
+
     const pics = opus.pics.map((x) => x.url)
 
     const pub_ts = item.modules.module_author.pub_ts
