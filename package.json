@@ -2,7 +2,8 @@
   "name": "bilibili-dynamic-saver",
   "version": "0.0.1",
   "description": "bilibili dynamic saver",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "bin": {
     "bili-dyn": "./dist/bin.js",
