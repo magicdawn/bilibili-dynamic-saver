@@ -13,3 +13,10 @@ coverage.*
 **/*.tsbuildinfo
 /lib
 /dist
+
+# other files
+/examples
+
+# test
+test/fixtures/*
+!test/fixtures/bilibili-example.cookie.txt
