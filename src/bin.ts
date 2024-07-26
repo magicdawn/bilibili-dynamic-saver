@@ -22,24 +22,22 @@ const argv = cli(
       },
     },
   },
-  defaultCommandAction,
-)
+  async (parsed) => {
+    const { mid } = parsed._
+    let { cookie } = parsed.flags
 
-async function defaultCommandAction() {
-  const { mid } = argv._
-  let { cookie } = argv.flags
-
-  if (!mid) {
-    throw new Error('mid is required')
-  }
-
-  if (cookie) {
-    cookie = path.resolve(cookie)
-    if (fse.existsSync(cookie)) {
-      console.log(`${logSymbols.info} using cookie file %s`, cookie)
-      useCookieFile(cookie)
+    if (!mid) {
+      throw new Error('mid is required')
     }
-  }
 
-  await downloadDynamicOf(mid)
-}
+    if (cookie) {
+      cookie = path.resolve(cookie)
+      if (fse.existsSync(cookie)) {
+        console.log(`${logSymbols.info} using cookie file %s`, cookie)
+        useCookieFile(cookie)
+      }
+    }
+
+    await downloadDynamicOf(mid)
+  },
+)
