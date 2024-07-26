@@ -26,9 +26,8 @@ const argv = cli(
     const { mid } = parsed._
     let { cookie } = parsed.flags
 
-    if (!mid) {
-      throw new Error('mid is required')
-    }
+    if (!mid) throw new Error('mid is required')
+    if (!/^\d+$/.test(mid)) throw new Error('invalid mid format')
 
     if (cookie) {
       cookie = path.resolve(cookie)
