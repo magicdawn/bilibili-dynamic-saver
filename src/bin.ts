@@ -1,42 +1,45 @@
-#!/usr/bin/env node
-
-import { cac } from 'cac'
-import esmUtils from 'esm-utils'
+import { cli } from 'cleye'
+import { createRequire } from 'module'
 import path from 'path'
+import type { PackageJson } from 'type-fest'
 import { downloadDynamicOf, useCookieFile } from './index'
 import { fse, logSymbols } from './libs'
 
-const { require } = esmUtils(import.meta)
-const { name, version } = require('../package.json')
+const _require = createRequire(import.meta.url)
+const { name, version } = _require('../package.json') as PackageJson
 
-const cli = cac(name)
+const argv = cli(
+  {
+    name,
+    version,
+    parameters: ['<mid>'],
+    flags: {
+      cookie: {
+        type: String,
+        alias: 'c',
+        description: 'txt file of exported cookie',
+        default: 'bilibili.cookie.txt',
+      },
+    },
+  },
+  defaultCommandAction,
+)
 
-cli
-  .command('[mid]', `UP's mid`)
-  .option('--cookie', 'txt file of exported cookie', { default: 'bilibili.cookie.txt' })
-  .action(async (mid: string, options) => {
-    if (!mid) {
-      cli.outputHelp()
-      return
+async function defaultCommandAction() {
+  const { mid } = argv._
+  let { cookie } = argv.flags
+
+  if (!mid) {
+    throw new Error('mid is required')
+  }
+
+  if (cookie) {
+    cookie = path.resolve(cookie)
+    if (fse.existsSync(cookie)) {
+      console.log(`${logSymbols.info} using cookie file %s`, cookie)
+      useCookieFile(cookie)
     }
+  }
 
-    let cookie = options.cookie
-    if (cookie) {
-      cookie = path.resolve(cookie)
-      if (fse.existsSync(cookie)) {
-        console.log(`${logSymbols.info} using cookie file %s`, cookie)
-        useCookieFile(cookie)
-      }
-    }
-
-    await downloadDynamicOf(mid)
-  })
-
-// Display help message when `-h` or `--help` appears
-cli.help()
-
-// Display version number when `-v` or `--version` appears
-// It's also used in help message
-cli.version(version)
-
-cli.parse()
+  await downloadDynamicOf(mid)
+}

@@ -1,9 +1,9 @@
 import esmUtils from 'esm-utils'
 import path from 'path'
-import { beforeAll, describe, it, should } from 'vitest'
+import { beforeAll, chai, describe, expect, it } from 'vitest'
 import { getUpName, useCookieFile } from '../src'
 
-should()
+chai.should()
 const { __dirname } = esmUtils(import.meta)
 
 beforeAll(() => {
@@ -13,6 +13,6 @@ beforeAll(() => {
 describe('Simple Test', () => {
   it('getUpName works', async () => {
     const name = await getUpName('21837784')
-    name.should.equal('阿斗归来了')
+    expect(name).toEqual('阿斗归来了')
   })
 })
