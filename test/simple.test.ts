@@ -1,13 +1,12 @@
-import esmUtils from 'esm-utils'
 import path from 'path'
 import { beforeAll, chai, describe, expect, it } from 'vitest'
-import { getUpName, useCookieFile } from '../src'
+import { getUpName } from '../src'
+import { useCookieFile } from '../src/cookie'
 
 chai.should()
-const { __dirname } = esmUtils(import.meta)
 
 beforeAll(() => {
-  useCookieFile(path.join(__dirname, './fixtures/bilibili.cookie.txt'))
+  useCookieFile(path.join(import.meta.dirname, './fixtures/bilibili.cookie.txt'))
 })
 
 describe('Simple Test', () => {
