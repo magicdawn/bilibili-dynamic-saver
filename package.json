@@ -1,6 +1,6 @@
 {
   "name": "bilibili-dynamic-saver",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "bilibili dynamic saver",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
