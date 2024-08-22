@@ -1,5 +1,8 @@
 name: sync-tag-to-release
 
+permissions:
+  contents: write
+
 on:
   push:
     tags:
