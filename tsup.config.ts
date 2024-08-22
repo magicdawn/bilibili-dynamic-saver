@@ -2,7 +2,7 @@ import { defineConfig } from 'tsup'
 
 export default defineConfig((options) => {
   return {
-    entry: ['src/index.ts', 'src/bin.ts'],
+    entry: ['src/index.ts', 'src/cli.ts'],
     format: 'esm',
     target: 'node16',
     clean: true,

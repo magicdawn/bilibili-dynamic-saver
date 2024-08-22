@@ -30,17 +30,6 @@ export const request = axios.create({
   },
 })
 
-export function useCookieFile(cookieFile: string) {
-  const cookie = fse
-    .readFileSync(cookieFile, 'utf8')
-    .split('\n')
-    .map((l) => l.trim())
-    .filter((l) => Boolean(l))
-    .filter((l) => !(l.startsWith('//') || l.startsWith('#')))
-    .join('')
-  request.defaults.headers['cookie'] = cookie
-}
-
 export async function getUpName(mid: string) {
   const res = await request.get('https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/all', {
     params: {
@@ -99,14 +88,14 @@ export async function getDynamicOf(mid: string, lastDownloadItemPubTs: number | 
   return items
 }
 
-export async function downloadDynamicOf(mid: string) {
+export async function downloadDynamicOf(mid: string, dir?: string) {
   const upName = await getUpName(mid)
   if (!upName) {
     console.error('can not get up name, please set cookie manually')
     return
   }
 
-  const downloadDir = `[${upName}]`
+  const downloadDir = dir ?? `[${upName}]`
 
   const lastDownloadItemPubTs = readRecord(downloadDir)
   let items = await getDynamicOf(mid, lastDownloadItemPubTs)
@@ -150,7 +139,7 @@ export async function downloadDynamicOf(mid: string) {
       await dl({ url, file })
       console.log(`${logSymbols.success} %s`, file)
     },
-    6
+    6,
   )
 
   // do not save 0
