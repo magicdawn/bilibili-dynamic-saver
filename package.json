@@ -19,8 +19,9 @@
     "test:dev": "vitest",
     "test-cover": "vitest run --coverage",
     "dev": "tsup --watch",
-    "build": "tsup",
-    "prepublishOnly": "npm run build"
+    "build": "npm run typecheck && tsup",
+    "prepublishOnly": "npm run build",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "bilibili",

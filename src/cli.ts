@@ -1,9 +1,9 @@
 import { Builtins, Cli } from 'clipanion'
 import { DownloadCommand } from './commands/DownloadCommand'
-import { pkg } from './pkg'
+import { APP_NAME, pkg } from './pkg'
 
 const cli = new Cli({
-  binaryLabel: pkg.name,
+  binaryLabel: APP_NAME,
   binaryName: Object.keys(pkg.bin)[0],
   binaryVersion: pkg.version,
 })

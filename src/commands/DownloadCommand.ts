@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { downloadDynamicOf } from '..'
 import { DEFAULT_COOKIE_FILE, getUsingCookieFile, useCookieFile } from '../cookie'
 import { fse, logSymbols } from '../libs'
-import { pkg } from '../pkg'
+import { APP_NAME } from '../pkg'
 
 export class DownloadCommand extends Command {
   static paths?: string[][] | undefined = [Command.Default]
@@ -15,16 +15,16 @@ export class DownloadCommand extends Command {
     ## cookie \n
     default search paths: \n
       - \`./${DEFAULT_COOKIE_FILE}\`
-      - \`~/.config/${pkg.name}/${DEFAULT_COOKIE_FILE}\`
-      - \`~/.config/${pkg.name}/cookie.txt\`
+      - \`~/.config/${APP_NAME}/${DEFAULT_COOKIE_FILE}\`
+      - \`~/.config/${APP_NAME}/cookie.txt\`
 
     ## dir \n
-    default ./[<up-name>]
+    default \`./[\${up-name}]\`
     `,
   }
 
   mid = Option.String({
-    required: true,
+    required: false,
     name: 'mid',
   })
 
@@ -37,7 +37,9 @@ export class DownloadCommand extends Command {
   })
 
   async execute(): Promise<number | void> {
-    const mid = z.string().regex(/^\d+$/, { message: 'invalid mid' }).parse(this.mid)
+    const mid = this.mid
+      ? z.string().regex(/^\d+$/, { message: 'invalid mid' }).parse(this.mid)
+      : undefined
 
     let cookie = getUsingCookieFile(this.cookie)
     if (cookie) {

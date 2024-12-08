@@ -5,11 +5,14 @@ import path from 'path'
 import pmap from 'promise.map'
 import { DynamicFeedItem, DynamicFeedJson, DynamicType } from './define/dynamic-feed-json'
 import { dayjs, fse, logSymbols } from './libs'
+import { APP_NAME } from './pkg'
 
-export function getRecordFile(downloadDir: string) {
+/**
+ * record file: legacy file storing last downloaded timestamp
+ */
+function getRecordFile(downloadDir: string) {
   return path.join(downloadDir, '.last-downloaded-record.txt')
 }
-
 function readRecord(downloadDir: string): number | undefined {
   const recordFile = getRecordFile(downloadDir)
   if (!fse.existsSync(recordFile)) return
@@ -18,9 +21,42 @@ function readRecord(downloadDir: string): number | undefined {
   return Number(content)
 }
 
-function saveRecord(downloadDir: string, ts: number) {
-  const recordFile = getRecordFile(downloadDir)
-  fse.outputFileSync(recordFile, ts.toString())
+/**
+ * state
+ */
+export type DownloadState = {
+  lastDownloadRecord?: number
+  mid?: number
+}
+
+export function getStateFile(downloadDir: string) {
+  return path.join(downloadDir, `.${APP_NAME}--state.json`)
+}
+
+export function readState(downloadDir: string): DownloadState | undefined {
+  const stateFile = getStateFile(downloadDir)
+  if (fse.existsSync(stateFile)) {
+    const json = fse.readJsonSync(stateFile)
+    return json
+  }
+
+  // fallback to legacy
+  const record = readRecord(downloadDir)
+  if (record) {
+    return { lastDownloadRecord: record }
+  }
+}
+
+export function saveState(downloadDir: string, state: DownloadState) {
+  const stateFile = getStateFile(downloadDir)
+  fse.outputJsonSync(stateFile, state)
+  // clean up legacy
+  {
+    const f = getRecordFile(downloadDir)
+    if (fse.existsSync(f)) {
+      fse.removeSync(f)
+    }
+  }
 }
 
 export const request = axios.create({
@@ -53,16 +89,27 @@ export async function getDynamicOf(mid: string, lastDownloadItemPubTs: number | 
     console.log('singleRequest: page = %s, offset = %s', page, paramOffset)
     const res = await request.get('https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/all', {
       params: {
-        host_mid: mid,
-        offset: paramOffset,
-        page: page++,
-        features: 'itemOpusStyle,listOnlyfans',
+        'timezone_offset': '-480',
+        'type': 'video',
+        'platform': 'web',
+        'features': 'itemOpusStyle',
+        'web_location': '0.0',
+        'x-bili-device-req-json': JSON.stringify({ platform: 'web', device: 'pc' }),
+        'x-bili-web-req-json': JSON.stringify({ spm_id: '0.0' }),
+        'host_mid': mid,
+        'offset': paramOffset,
+        'page': page,
       },
     })
 
     const json = res.data as DynamicFeedJson
+    if (!isWebApiSuccess(json)) {
+      console.warn('[getDynamicOf]: %j', json)
+    }
+
     let has_more = json.data.has_more
     const offset = json.data.offset
+    page++
 
     // do not call api for old info
     if (has_more && lastDownloadItemPubTs) {
@@ -70,6 +117,13 @@ export async function getDynamicOf(mid: string, lastDownloadItemPubTs: number | 
       if (pub_ts <= lastDownloadItemPubTs) {
         has_more = false
       }
+    }
+
+    // keep the updated items
+    if (lastDownloadItemPubTs) {
+      json.data.items = json.data.items.filter(
+        (item) => item.modules.module_author.pub_ts > lastDownloadItemPubTs,
+      )
     }
 
     return { json, has_more, offset }
@@ -88,16 +142,42 @@ export async function getDynamicOf(mid: string, lastDownloadItemPubTs: number | 
   return items
 }
 
-export async function downloadDynamicOf(mid: string, dir?: string) {
-  const upName = await getUpName(mid)
-  if (!upName) {
-    console.error('can not get up name, please set cookie manually')
-    return
+/**
+ * check json has {code: 0, message: "0"}
+ */
+export function isWebApiSuccess(json: any) {
+  return json?.code === 0 && (json?.message === '0' || json?.message === 'success')
+}
+
+export async function downloadDynamicOf(mid?: string, dir?: string) {
+  if (!mid && !dir) {
+    throw new Error('mid and dir can not be both empty')
   }
 
-  const downloadDir = dir ?? `[${upName}]`
+  if (!dir) {
+    const upName = await getUpName(mid!)
+    if (!upName) {
+      console.error('can not get up name, please set cookie manually')
+      return
+    }
+    dir ??= `[${upName}]`
+  }
 
-  const lastDownloadItemPubTs = readRecord(downloadDir)
+  // absolute
+  dir = path.resolve(dir)
+
+  // state
+  let state = readState(dir) ?? {}
+  const lastDownloadItemPubTs = state.lastDownloadRecord
+  mid ??= state.mid?.toString()
+  if (!mid) {
+    throw new Error('mid is empty and can not load from state file')
+  }
+
+  // save mid
+  state.mid = Number(mid)
+  saveState(dir, state)
+
   let items = await getDynamicOf(mid, lastDownloadItemPubTs)
   if (lastDownloadItemPubTs) {
     items = items.filter((x) => {
@@ -128,7 +208,7 @@ export async function downloadDynamicOf(mid: string, dir?: string) {
       const ext = path.extname(url)
       tasks.push({
         url,
-        file: path.join(downloadDir, `${date} ${filenamify(text)} ${index + 1}${ext}`),
+        file: path.join(dir, `${date} ${filenamify(text)} ${index + 1}${ext}`),
       })
     })
   }
@@ -144,6 +224,7 @@ export async function downloadDynamicOf(mid: string, dir?: string) {
 
   // do not save 0
   if (maxPubTs) {
-    saveRecord(downloadDir, maxPubTs)
+    state.lastDownloadRecord = maxPubTs
+    saveState(dir, state)
   }
 }

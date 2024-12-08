@@ -2,7 +2,7 @@ import path from 'path'
 import { xdgConfig } from 'xdg-basedir'
 import { request } from '.'
 import { fse } from './libs'
-import { pkg } from './pkg'
+import { APP_NAME } from './pkg'
 
 export const DEFAULT_COOKIE_FILE = 'bilibili.cookie.txt'
 
@@ -26,12 +26,12 @@ export function getUsingCookieFile(file?: string) {
   }
 
   {
-    const file = path.join(xdgConfig!, pkg.name!, DEFAULT_COOKIE_FILE)
+    const file = path.join(xdgConfig!, APP_NAME, DEFAULT_COOKIE_FILE)
     if (fse.existsSync(file)) return file
   }
 
   {
-    const file = path.join(xdgConfig!, pkg.name!, 'cookie.txt')
+    const file = path.join(xdgConfig!, APP_NAME, 'cookie.txt')
     if (fse.existsSync(file)) return file
   }
 }
