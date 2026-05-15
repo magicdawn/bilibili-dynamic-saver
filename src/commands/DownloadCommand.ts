@@ -1,5 +1,5 @@
+import path from 'node:path'
 import { Command, Option, type Usage } from 'clipanion'
-import path from 'path'
 import { z } from 'zod'
 import { downloadDynamicOf } from '..'
 import { DEFAULT_COOKIE_FILE, getUsingCookieFile, useCookieFile } from '../cookie'
@@ -37,9 +37,7 @@ export class DownloadCommand extends Command {
   })
 
   async execute(): Promise<number | void> {
-    const mid = this.mid
-      ? z.string().regex(/^\d+$/, { message: 'invalid mid' }).parse(this.mid)
-      : undefined
+    const mid = this.mid ? z.string().regex(/^\d+$/, { message: 'invalid mid' }).parse(this.mid) : undefined
 
     let cookie = getUsingCookieFile(this.cookie)
     if (cookie) {

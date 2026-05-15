@@ -1,9 +1,9 @@
+import path from 'node:path'
 import axios from 'axios'
 import { dl } from 'dl-vampire'
 import filenamify from 'filenamify'
-import path from 'path'
 import pmap from 'promise.map'
-import { DynamicFeedItem, DynamicFeedJson, DynamicType } from './define/dynamic-feed-json'
+import { DynamicType, type DynamicFeedItem, type DynamicFeedJson } from './define/dynamic-feed-json'
 import { dayjs, fse, logSymbols } from './libs'
 import { APP_NAME } from './pkg'
 
@@ -121,9 +121,7 @@ export async function getDynamicOf(mid: string, lastDownloadItemPubTs: number | 
 
     // keep the updated items
     if (lastDownloadItemPubTs) {
-      json.data.items = json.data.items.filter(
-        (item) => item.modules.module_author.pub_ts > lastDownloadItemPubTs,
-      )
+      json.data.items = json.data.items.filter((item) => item.modules.module_author.pub_ts > lastDownloadItemPubTs)
     }
 
     return { json, has_more, offset }
@@ -167,7 +165,7 @@ export async function downloadDynamicOf(mid?: string, dir?: string) {
   dir = path.resolve(dir)
 
   // state
-  let state = readState(dir) ?? {}
+  const state = readState(dir) ?? {}
   const lastDownloadItemPubTs = state.lastDownloadRecord
   mid ??= state.mid?.toString()
   if (!mid) {

@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 import { beforeAll, chai, describe, expect, it } from 'vitest'
 import { getUpName } from '../src'
 import { useCookieFile } from '../src/cookie'

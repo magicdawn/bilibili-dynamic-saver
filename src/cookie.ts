@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 import { xdgConfig } from 'xdg-basedir'
 import { request } from '.'
 import { fse } from './libs'
@@ -11,10 +11,10 @@ export function useCookieFile(cookieFile: string) {
     .readFileSync(cookieFile, 'utf8')
     .split('\n')
     .map((l) => l.trim())
-    .filter((l) => Boolean(l))
+    .filter(Boolean)
     .filter((l) => !(l.startsWith('//') || l.startsWith('#')))
     .join('')
-  request.defaults.headers['cookie'] = cookie
+  request.defaults.headers.cookie = cookie
 }
 
 export function getUsingCookieFile(file?: string) {
