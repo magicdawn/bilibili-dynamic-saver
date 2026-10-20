@@ -1,10 +1,10 @@
 import path from 'node:path'
 import { Command, Option, type Usage } from 'clipanion'
 import { z } from 'zod'
-import { downloadDynamicOf } from '..'
-import { DEFAULT_COOKIE_FILE, getUsingCookieFile, useCookieFile } from '../cookie'
-import { fse, logSymbols } from '../libs'
-import { APP_NAME } from '../pkg'
+import { DEFAULT_COOKIE_FILE, getUsingCookieFile, useCookieFile } from '$cookie'
+import { fse, logSymbols } from '$libs'
+import { APP_NAME } from '$pkg'
+import { downloadDynamicOf } from '../index.js'
 
 export class DownloadCommand extends Command {
   static paths?: string[][] | undefined = [Command.Default]

@@ -1,8 +1,8 @@
 import path from 'node:path'
 import { xdgConfig } from 'xdg-basedir'
-import { request } from '.'
-import { fse } from './libs'
-import { APP_NAME } from './pkg'
+import { request } from './index.js'
+import { fse } from './libs.js'
+import { APP_NAME } from './pkg.js'
 
 export const DEFAULT_COOKIE_FILE = 'bilibili.cookie.txt'
 

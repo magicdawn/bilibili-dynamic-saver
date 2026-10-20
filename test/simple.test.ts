@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { beforeAll, chai, describe, expect, it } from 'vitest'
-import { getUpName } from '../src'
-import { useCookieFile } from '../src/cookie'
+import { useCookieFile } from '../src/cookie.js'
+import { getUpName } from '../src/index.js'
 
 chai.should()
 

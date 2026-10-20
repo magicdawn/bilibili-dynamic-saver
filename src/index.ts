@@ -3,9 +3,9 @@ import axios from 'axios'
 import { dl } from 'dl-vampire'
 import filenamify from 'filenamify'
 import pmap from 'promise.map'
-import { DynamicType, type DynamicFeedItem, type DynamicFeedJson } from './define/dynamic-feed-json'
-import { dayjs, fse, logSymbols } from './libs'
-import { APP_NAME } from './pkg'
+import { dayjs, fse, logSymbols } from '$libs'
+import { APP_NAME } from '$pkg'
+import { DynamicType, type DynamicFeedItem, type DynamicFeedJson } from './define/dynamic-feed-json.js'
 
 /**
  * record file: legacy file storing last downloaded timestamp
@@ -90,7 +90,7 @@ export async function getDynamicOf(mid: string, lastDownloadItemPubTs: number | 
     const res = await request.get('https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/all', {
       params: {
         'timezone_offset': '-480',
-        'type': 'video',
+        'type': 'all',
         'platform': 'web',
         'features': 'itemOpusStyle',
         'web_location': '0.0',
@@ -175,6 +175,8 @@ export async function downloadDynamicOf(mid?: string, dir?: string) {
   // save mid
   state.mid = Number(mid)
   saveState(dir, state)
+
+  debugger
 
   let items = await getDynamicOf(mid, lastDownloadItemPubTs)
   if (lastDownloadItemPubTs) {

@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
+    "paths": {
+      "$*": ["./src/*/index.js", "./src/*.js"]
+    },
     "target": "ESNext",
-    "module": "preserve",
-    "moduleResolution": "bundler",
+    "module": "nodenext", // nub 只支持 nodenext, 而不是 preserve/bundle, 写起来麻烦点, 跑起来兼容性更强
+    "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true
   }
