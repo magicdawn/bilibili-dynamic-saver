@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
     "paths": {
-      "$*": ["./src/*/index.js", "./src/*.js"]
+      "$*": ["./src/*"]
     },
-    "target": "ESNext",
-    "module": "nodenext", // nub 只支持 nodenext, 而不是 preserve/bundle, 写起来麻烦点, 跑起来兼容性更强
-    "esModuleInterop": true,
+    "target": "es2025",
+    // About nub
+    // 1. nub 只支持 nodenext, 而不是 preserve/bundle, 写起来麻烦点, 跑起来兼容性更强
+    // 2. 并非是不支持 preserve/bundler, 而是不支持 dir imports, ERR_UNSUPPORTED_DIR_IMPORT, 写上 ./index 即可
+    "module": "preserve",
     "strict": true,
     "skipLibCheck": true
   }

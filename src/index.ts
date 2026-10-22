@@ -3,9 +3,9 @@ import axios from 'axios'
 import { dl } from 'dl-vampire'
 import filenamify from 'filenamify'
 import pmap from 'promise.map'
-import { dayjs, fse, logSymbols } from '$libs'
-import { APP_NAME } from '$pkg'
-import { DynamicType, type DynamicFeedItem, type DynamicFeedJson } from './define/dynamic-feed-json.js'
+import { DynamicType, type DynamicFeedItem, type DynamicFeedJson } from './define/dynamic-feed-json'
+import { dayjs, fse, logSymbols } from './libs'
+import { APP_NAME } from './pkg'
 
 /**
  * record file: legacy file storing last downloaded timestamp

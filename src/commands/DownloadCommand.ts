@@ -3,8 +3,8 @@ import { Command, Option, type Usage } from 'clipanion'
 import { z } from 'zod'
 import { DEFAULT_COOKIE_FILE, getUsingCookieFile, useCookieFile } from '$cookie'
 import { fse, logSymbols } from '$libs'
-import { APP_NAME } from '$pkg'
-import { downloadDynamicOf } from '../index.js'
+import { downloadDynamicOf } from '../index'
+import { APP_NAME } from '../pkg'
 
 export class DownloadCommand extends Command {
   static paths?: string[][] | undefined = [Command.Default]

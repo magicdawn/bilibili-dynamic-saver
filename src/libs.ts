@@ -1,7 +1,7 @@
-import 'dayjs/locale/zh-cn.js'
+import 'dayjs/locale/zh-cn'
 import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration.js'
-import relativeTime from 'dayjs/plugin/relativeTime.js'
+import duration from 'dayjs/plugin/duration'
+import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
 dayjs.locale('zh-cn')

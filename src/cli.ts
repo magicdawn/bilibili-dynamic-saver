@@ -1,8 +1,8 @@
 #!/usr/bin/env nub
 
 import { Builtins, Cli } from 'clipanion'
-import { DownloadCommand } from './commands/DownloadCommand.js'
-import { APP_NAME, pkg } from './pkg.js'
+import { DownloadCommand } from './commands/DownloadCommand'
+import { APP_NAME, pkg } from './pkg'
 
 const cli = new Cli({
   binaryLabel: APP_NAME,
